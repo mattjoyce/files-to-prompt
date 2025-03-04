@@ -138,17 +138,6 @@ def get_sqlite_schema(file_path):
             schema_parts.append("-- Tables")
             for table_name, table_sql in tables:
                 schema_parts.append(f"{table_sql};")
-                
-                # Get column info for each table
-                cursor.execute(f"PRAGMA table_info({table_name})")
-                columns = cursor.fetchall()
-                schema_parts.append(f"\n-- Columns for {table_name}")
-                for col in columns:
-                    col_id, col_name, col_type, not_null, default_val, is_pk = col
-                    schema_parts.append(f"--   {col_name} ({col_type})" + 
-                                      (", PRIMARY KEY" if is_pk else "") + 
-                                      (", NOT NULL" if not_null else "") + 
-                                      (f", DEFAULT {default_val}" if default_val is not None else ""))
         
         if views:
             schema_parts.append("\n-- Views")
@@ -402,11 +391,6 @@ def cli(
         -- SQLite3 Database Schema
         -- Tables
         CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT, email TEXT);
-        
-        -- Columns for users
-        --   id (INTEGER), PRIMARY KEY
-        --   name (TEXT)
-        --   email (TEXT)
         ---
     """
     # Reset global_index for pytest
